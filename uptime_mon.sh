@@ -1,10 +1,17 @@
 #!/bin/bash
 
-BLUE="\033[1;34m"   # Bright blue
-RESET="\033[0m"     # Reset to default color
+BLUE="\033[1;34m"
+RESET="\033[0m"
+
+# Hide cursor for clean look
+tput civis
+
+# Trap Ctrl+C so we can restore cursor on exit
+trap 'tput cnorm; clear; exit' INT
 
 while true; do
-    clear
+    # Move cursor to top-left instead of clearing
+    tput cup 0 0
 
     # --- Get uptime info ---
     uptime_raw=$(awk '{print $1}' /proc/uptime)
@@ -30,7 +37,7 @@ while true; do
     tput cup $row $col
     echo -e "${BLUE}${formatted}${RESET}"
 
-    # --- Get full logged-in user info ---
+    # --- Get logged-in users ---
     users=$(who)
     [ -z "$users" ] && users="(no users logged in)"
 

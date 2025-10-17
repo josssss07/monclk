@@ -8,7 +8,7 @@ tput civis
 
 # Trap Ctrl+C so we can restore cursor on exit
 trap 'tput cnorm; clear; exit' INT
-
+clear
 while true; do
     # Move cursor to top-left instead of clearing
     tput cup 0 0
@@ -24,7 +24,9 @@ while true; do
     minutes=$(( (seconds_int % 3600) / 60 ))
     seconds=$((seconds_int % 60))
 
-    printf -v formatted "%02d:%02d:%02d:%02d:%03d" "$days" "$hours" "$minutes" "$seconds" "$milliseconds"
+    # Force decimal numbers with 10# to avoid octal errors
+    printf -v formatted "%02d:%02d:%02d:%02d:%03d" \
+        $((10#$days)) $((10#$hours)) $((10#$minutes)) $((10#$seconds)) $((10#$milliseconds))
 
     # --- Get terminal size ---
     rows=$(tput lines)
@@ -51,5 +53,5 @@ while true; do
         user_row=$((user_row + 1))
     done <<< "$users"
 
-    sleep 0.1
+    
 done
